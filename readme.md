@@ -23,7 +23,6 @@
 
    * ![Afterburner Monitoring Settings](images/monsetup.png)
 
-
 ## ✨ 주요 기능 (Key Features)
 
 * **🖥️ 스마트 듀얼 모니터 자동 절전**
