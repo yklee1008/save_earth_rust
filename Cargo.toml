@@ -1,0 +1,58 @@
+[package]
+name = "save_earth_NVIDIA"
+version = "2.0.0"
+edition = "2021"
+
+[[bin]]
+name = "save_earth_NVIDIA"
+path = "src/main.rs"
+
+[dependencies]
+chrono = "0.4"
+sysinfo = "0.30"
+nvml-wrapper = "0.10"
+image = "0.24"
+tray-icon = "0.19"
+
+winapi = { version = "0.3", features = [
+    "shellapi",
+    "winuser",
+    "processthreadsapi",
+    "securitybaseapi",
+    "winnt",
+    "handleapi",
+    "fileapi",
+    "namedpipeapi",
+    "memoryapi",
+    "winbase",
+    "synchapi",
+    "errhandlingapi",
+    "winerror",
+    "consoleapi"
+] }
+
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_Graphics_Gdi",
+    "Win32_Graphics_Dxgi",
+    "Win32_System_Com",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_Devices",
+    "Win32_Devices_Display",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_Accessibility",
+    "Win32_System_Console",
+    "Win32_System_LibraryLoader",
+    "Win32_System_ProcessStatus",
+    "Win32_System_Threading",
+] }
+
+eframe = { version = "0.28", optional = true }
+egui = { version = "0.28", optional = true }
+
+[features]
+default = ["dashboard"]
+dashboard = ["eframe", "egui"]
+
+[build-dependencies]
+winres = "0.1"
