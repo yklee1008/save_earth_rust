@@ -20,8 +20,8 @@
 
 
 4. 애프터버너 **설정 - Monitoring(모니터링) 탭**에서 필요한 센서 항목들에 **체크(v)**가 되어 있나요?
-<br>
-   * ![Afterburner Monitoring Settings](images/monitoring.png)
+
+   * ![Afterburner Monitoring Settings](images/monsetup.png)
 
 
 ## ✨ 주요 기능 (Key Features)
