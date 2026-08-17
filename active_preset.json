@@ -1,0 +1,6 @@
+{
+  "active_preset": "Auto",
+  "cpu_threshold": 25.0,
+  "gpu_threshold": 30.0,
+  "hold_time": 8
+}

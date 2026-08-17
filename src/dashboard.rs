@@ -164,7 +164,7 @@ impl DashboardApp {
             .map(|s| s.contains("true"))
             .unwrap_or(true);
 
-        Self {
+                Self {
             is_visible,
             preset,
             cpu_threshold: cpu,
@@ -188,7 +188,7 @@ impl DashboardApp {
             rx,
             save_message: None,
             message_timer: None,
-            last_visible_state: false,
+            last_visible_state: true,
             dual_monitor_active: loaded_dual_mon_active,
         }
     }
@@ -226,28 +226,11 @@ impl eframe::App for DashboardApp {
             std::process::exit(0);
         }
 
-        if current_visible != self.last_visible_state {
+                if current_visible != self.last_visible_state {
             self.last_visible_state = current_visible;
             ctx.send_viewport_cmd(egui::ViewportCommand::Visible(current_visible));
             if current_visible {
-                #[cfg(target_os = "windows")]
-                {
-                    if let Some(monitor) = ctx.input(|i| i.viewport().monitor_size) {
-                        let window_width = 460.0;
-                        let window_height = 610.0;
-                        let center_x = (monitor.x - window_width) / 2.0;
-                        let center_y = (monitor.y - window_height) / 2.0;
-                        if center_x > 0.0 && center_y > 0.0 {
-                            ctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(
-                                egui::pos2(center_x, center_y),
-                            ));
-                        }
-                    }
-                }
                 ctx.send_viewport_cmd(egui::ViewportCommand::Focus);
-                ctx.send_viewport_cmd(egui::ViewportCommand::RequestUserAttention(
-                    egui::UserAttentionType::Informational,
-                ));
             }
             ctx.request_repaint();
         }
@@ -650,30 +633,31 @@ fn start_named_pipe_server(is_visible: Arc<AtomicBool>, egui_ctx: egui::Context)
                             ) != 0
                             {
                                 let msg = String::from_utf8_lossy(&buffer[..bytes_read as usize]);
-                                if msg.contains("SHOW") {
+                                                                if msg.contains("SHOW") {
+                                    let already_visible = is_visible.load(Ordering::SeqCst);
                                     is_visible.store(true, Ordering::SeqCst);
-                                    egui_ctx.send_viewport_cmd(egui::ViewportCommand::Visible(true));
                                     
-                                    #[cfg(target_os = "windows")]
-                                    {
-                                        if let Some(monitor) = egui_ctx.input(|i| i.viewport().monitor_size) {
-                                            let window_width = 460.0;
-                                            let window_height = 610.0;
-                                            let center_x = (monitor.x - window_width) / 2.0;
-                                            let center_y = (monitor.y - window_height) / 2.0;
-                                            if center_x > 0.0 && center_y > 0.0 {
-                                                egui_ctx.send_viewport_cmd(
-                                                    egui::ViewportCommand::OuterPosition(
-                                                        egui::pos2(center_x, center_y),
-                                                    ),
-                                                );
+                                    if !already_visible {
+                                        egui_ctx.send_viewport_cmd(egui::ViewportCommand::Visible(true));
+                                        #[cfg(target_os = "windows")]
+                                        {
+                                            if let Some(monitor) = egui_ctx.input(|i| i.viewport().monitor_size) {
+                                                let window_width = 460.0;
+                                                let window_height = 610.0;
+                                                let center_x = (monitor.x - window_width) / 2.0;
+                                                let center_y = (monitor.y - window_height) / 2.0;
+                                                if center_x > 0.0 && center_y > 0.0 {
+                                                    egui_ctx.send_viewport_cmd(
+                                                        egui::ViewportCommand::OuterPosition(
+                                                            egui::pos2(center_x, center_y),
+                                                        ),
+                                                    );
+                                                }
                                             }
                                         }
                                     }
+                                    
                                     egui_ctx.send_viewport_cmd(egui::ViewportCommand::Focus);
-                                    egui_ctx.send_viewport_cmd(egui::ViewportCommand::RequestUserAttention(
-                                        egui::UserAttentionType::Informational,
-                                    ));
                                     egui_ctx.request_repaint();
                                 } else if msg.contains("QUIT") {
                                     CloseHandle(handle);
